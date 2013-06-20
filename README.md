@@ -7,7 +7,8 @@ me2day-Backup
 
 # 실행 환경
 .NET Framework 4.5가 설치된 Windows OS상에서 실행
-.NET Framework 4.5 Download - http://www.microsoft.com/en-us/download/details.aspx?id=30653
+.NET Framework 4.5 Download 
+- http://www.microsoft.com/en-us/download/details.aspx?id=30653
 
 # 백업 해주는 것들
 - 자신의 글
@@ -48,7 +49,11 @@ Error Message : 권한이 없습니다.
 
 3-1. output 폴더에 가면 보기 좋게 정리해 놨음.
 궁금하거나 기타 에러 사항 있으면, 아래에서 가장 최근 글에다가 남겨주면 됨.
+
+
 Contact URL : http://me2day.net/ssemi/tag/me2backup
+
+
 
 # P.S
 코멘트가 1,000개 넘는 사람 없겠지??? - 제한 걸어뒀는데…
