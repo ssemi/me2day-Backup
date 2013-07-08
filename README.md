@@ -73,3 +73,12 @@ Contact URL : http://me2day.net/ssemi/tag/me2backup
 
 여러 사용자가 미투데이를 각자의 방식으로 쓰고 있기 때문에 제가 생각지도 못한 에러들이 있을 수도 있어요.
 에러는 댓글로 이만 총총 =3=3=3
+
+# 미리보기
+https://dl.dropboxusercontent.com/u/3748960/ssemi/html/me2day_ssemi_2013.html
+
+# 폴더구조
+https://dl.dropboxusercontent.com/u/3748960/me2backup-folder.png
+
+# 다운로드
+https://dl.dropboxusercontent.com/u/3748960/me2backup.zip
