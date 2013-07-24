@@ -45,7 +45,10 @@ namespace me2dayBackup
             api = new Me2API();
             api.AppKey = "296a4e7d66d3b4f6f786af9b5517a048";
 
-            btnDebug.Visible = false;
+
+            #if DEBUG
+            //btnDebug.Visible = true;
+            #endif
         }
 
         #region 기본 정보 셋팅
@@ -177,9 +180,11 @@ namespace me2dayBackup
                 // 가입일 이전은 Stop
                 if (fromdate.ToString("yyyyMMdd").Equals(Convert.ToDateTime(tbMe2dayJoinDate.Text).AddDays(-1).ToString("yyyyMMdd")))
                 {
-                    MakeHTML();
+                    //MakeHTML();
                     btnsEnabled(true);
                     timer1.Stop();
+
+                    StatusMsg.Text += "\r\n\r\n데이터 백업이 완료되었습니다\n";
                 }
             }
             catch (Me2Exception ex)
@@ -364,86 +369,93 @@ namespace me2dayBackup
             string[] monthNames = {"", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
             try
             {
-                XmlDocument ret = new XmlDocument();
-                ret.Load(xmlFile);
-
-                XmlNodeList posts = ret.SelectNodes("//post");
-                thisMonth = getFileNameMonth(xmlFile);
-
-                #region 달마다 표시 해주기
-                if (string.IsNullOrEmpty(_previousMonth) || !_previousMonth.Equals(thisMonth))
+                if (File.Exists(xmlFile))
                 {
-                    if (!string.IsNullOrEmpty(_previousMonth))
+                    XmlDocument ret = new XmlDocument();
+                    ret.Load(xmlFile);
+
+                    XmlNodeList posts = ret.SelectNodes("//post");
+                    thisMonth = getFileNameMonth(xmlFile);
+
+                    #region 달마다 표시 해주기
+                    if (string.IsNullOrEmpty(_previousMonth) || !_previousMonth.Equals(thisMonth))
                     {
-                        sb.AppendLine("    </div>");
-                        sb.AppendLine("</div>");
+                        if (!string.IsNullOrEmpty(_previousMonth))
+                        {
+                            sb.AppendLine("    </div>");
+                            sb.AppendLine("</div>");
+                        }
+                        sb.AppendLine("<div class=\"list_view\">");
+                        sb.AppendFormat("    <h3 class=\"sec_month\"><strong>{0}</strong> - {1}</h3>{2}", monthNames[Convert.ToInt32(thisMonth)], thisMonth, Environment.NewLine);
+                        sb.AppendLine("    <div class=\"monthly_view\">");
                     }
-                    sb.AppendLine("<div class=\"list_view\">");
-                    sb.AppendFormat("    <h3 class=\"sec_month\"><strong>{0}</strong> - {1}</h3>{2}", monthNames[Convert.ToInt32(thisMonth)], thisMonth, Environment.NewLine);
-                    sb.AppendLine("    <div class=\"monthly_view\">");
-                }
-                #endregion
+                    #endregion
 
-                #region 포스트 부분
-                if (posts.Count > 0)
-                {
-                    string postsHtml = string.Empty;
-                    string listTemplate = GetFileContents(String.Format("{0}\\template-list.html", _currentDirectory));
-                    for (int i = 0; i < posts.Count; i++)
+                    #region 포스트 부분
+                    if (posts.Count > 0)
                     {
-                        string post_id = posts[i].SelectSingleNode("post_id").InnerText;
-                        string plink = posts[i].SelectSingleNode("plink").InnerText;
-                        string body = posts[i].SelectSingleNode("body").InnerText;
-                        string tagText = posts[i].SelectSingleNode("tagText") != null ? posts[i].SelectSingleNode("tagText").InnerText : string.Empty;
-                        string commentsCount = posts[i].SelectSingleNode("commentsCount").InnerText;
-                        string metooCount = posts[i].SelectSingleNode("metooCount").InnerText;
-                        string commentClosed = posts[i].SelectSingleNode("commentClosed").InnerText;
-
-                        #region 사진 저장
-                        string photoUrl = posts[i].SelectSingleNode("media/me2photo/photoUrl") != null ? posts[i].SelectSingleNode("media/me2photo/photoUrl").InnerText : string.Empty;
-
-                        string photoFileHtml = String.Empty;
-                        if (!string.IsNullOrEmpty(photoUrl))
+                        string postsHtml = string.Empty;
+                        string listTemplate = GetFileContents(String.Format("{0}\\template-list.html", _currentDirectory));
+                        for (int i = 0; i < posts.Count; i++)
                         {
-                            string photoFile = string.Empty;
-                            if (photoUrl.IndexOf("/") > -1)
-                                photoFile = photoUrl.Split('/')[photoUrl.Split('/').Length - 1];
+                            string post_id = posts[i].SelectSingleNode("post_id").InnerText;
+                            string plink = posts[i].SelectSingleNode("plink").InnerText;
+                            string body = posts[i].SelectSingleNode("body").InnerText;
+                            string tagText = posts[i].SelectSingleNode("tagText") != null ? posts[i].SelectSingleNode("tagText").InnerText : string.Empty;
+                            string commentsCount = posts[i].SelectSingleNode("commentsCount").InnerText;
+                            string metooCount = posts[i].SelectSingleNode("metooCount").InnerText;
+                            string commentClosed = posts[i].SelectSingleNode("commentClosed").InnerText;
 
-                            photoFile = photoFile.Substring(0, photoFile.IndexOf('?'));
-                            photoUrl = photoUrl.Substring(0, photoUrl.IndexOf('?'));
-                            if (isSavePhoto) DownloadRemoteImageFile(photoUrl, _outputFolderPhotos + "\\" + photoFile); // 사진 저장
-                            photoFileHtml = String.Format(@"<a class=""me2photo"" href=""../photos/{0}"" onclick=""imageview('{1}', this);return false;""><img width=""30"" src=""../profile/pa_me2photo.png"" alt=""[me2photo]"" /></a>", photoFile, post_id);
-                        }
-                        #endregion
+                            #region 사진 저장
+                            string photoUrl = posts[i].SelectSingleNode("media/me2photo/photoUrl") != null ? posts[i].SelectSingleNode("media/me2photo/photoUrl").InnerText : string.Empty;
 
-                        #region 코멘트 부분
-                        string commentsHtml = string.Empty;
-                        XmlDocument retCmt = new XmlDocument();
-                        retCmt.Load(xmlFile.Replace(".xml", string.Format("_{0}.xml", post_id)));
-
-                        if (retCmt != null)
-                        {
-                            XmlNodeList comments = retCmt.SelectNodes("//comment");
-
-                            if (comments != null && comments.Count > 0)
+                            string photoFileHtml = String.Empty;
+                            if (!string.IsNullOrEmpty(photoUrl))
                             {
-                                commentsHtml += string.Format("<div id=\"comment-{0}\" class=\"comments hfeed\" style=\"display:none;\">", post_id);
-                                for (int j = 0; j < comments.Count; j++)
-                                {
-                                    string commentsBody = comments[j].SelectSingleNode("body").InnerText;
-                                    string commentsPubDate = comments[j].SelectSingleNode("pubDate").InnerText;
-                                    DateTime commentsPublishdate = Convert.ToDateTime(commentsPubDate);
-                                    string commentsAuthorId = comments[j].SelectSingleNode("author/id").InnerText;
-                                    string commentsAuthorNick = comments[j].SelectSingleNode("author/nickname").InnerText;
+                                string photoFile = string.Empty;
+                                if (photoUrl.IndexOf("/") > -1)
+                                    photoFile = photoUrl.Split('/')[photoUrl.Split('/').Length - 1];
 
-                                    commentsHtml += String.Format(@"<div class=""comment hentry""><span class=""author""><span class=""profile fn"">{0}</span></span><span class=""entry-title entry-content"">{1}</span><div><abbr class=""time published"" title=""{2}"">{3}</abbr></div></div>", commentsAuthorNick, commentsBody, commentsPubDate, commentsPublishdate.ToString("yyyy'년' MM'월' dd'일' tt hh:mm "));
-                                }
-                                commentsHtml += "</div>";
+                                photoFile = photoFile.IndexOf('?') > -1 ? photoFile.Substring(0, photoFile.IndexOf('?')) : photoFile;
+                                photoUrl = photoUrl.IndexOf('?') > -1 ? photoUrl.Substring(0, photoUrl.IndexOf('?')) : photoUrl;
+                                if (isSavePhoto) DownloadRemoteImageFile(photoUrl, _outputFolderPhotos + "\\" + photoFile); // 사진 저장
+                                photoFileHtml = String.Format(@"<a class=""me2photo"" href=""../photos/{0}"" onclick=""imageview('{1}', this);return false;""><img width=""30"" src=""../profile/pa_me2photo.png"" alt=""[me2photo]"" /></a>", photoFile, post_id);
                             }
-                        }
-                        #endregion
+                            #endregion
 
-                        postsHtml += string.Format(@"
+                            #region 코멘트 부분
+                            string commentsHtml = string.Empty;
+
+                            string commentFile = xmlFile.Replace(".xml", string.Format("_{0}.xml", post_id));
+                            if (File.Exists(commentFile))
+                            {
+                                XmlDocument retCmt = new XmlDocument();
+                                retCmt.Load(commentFile);
+
+                                if (retCmt != null)
+                                {
+                                    XmlNodeList comments = retCmt.SelectNodes("//comment");
+
+                                    if (comments != null && comments.Count > 0)
+                                    {
+                                        commentsHtml += string.Format("<div id=\"comment-{0}\" class=\"comments hfeed\" style=\"display:none;\">", post_id);
+                                        for (int j = 0; j < comments.Count; j++)
+                                        {
+                                            string commentsBody = comments[j].SelectSingleNode("body").InnerText;
+                                            string commentsPubDate = comments[j].SelectSingleNode("pubDate").InnerText;
+                                            DateTime commentsPublishdate = Convert.ToDateTime(commentsPubDate);
+                                            string commentsAuthorId = comments[j].SelectSingleNode("author/id").InnerText;
+                                            string commentsAuthorNick = comments[j].SelectSingleNode("author/nickname").InnerText;
+
+                                            commentsHtml += String.Format(@"<div class=""comment hentry""><span class=""author""><span class=""profile fn"">{0}</span></span><span class=""entry-title entry-content"">{1}</span><div><abbr class=""time published"" title=""{2}"">{3}</abbr></div></div>", commentsAuthorNick, commentsBody, commentsPubDate, commentsPublishdate.ToString("yyyy'년' MM'월' dd'일' tt hh:mm "));
+                                        }
+                                        commentsHtml += "</div>";
+                                    }
+                                }
+                            }
+                            #endregion
+
+                            postsHtml += string.Format(@"
             <li class=""daily_posts"">
               <p class=""post"">
 	            {6}
@@ -455,26 +467,27 @@ namespace me2dayBackup
               {4}
             </li>
                     ", body, tagText, metooCount, commentClosed.ToLower().Equals("true") ? "closed" : commentsCount, commentsHtml, post_id, photoFileHtml);
+                        }
+
+                        string xmlDate = (xmlFile.IndexOf("_") > 0) ? xmlFile.Split('_')[xmlFile.Split('_').Length - 1].Replace(".xml", "") : string.Empty;
+                        xmlDate = string.Format("{0}-{1}-{2}", xmlDate.Substring(0, 4), xmlDate.Substring(4, 2), xmlDate.Substring(6, 2));
+                        DateTime xmlToDate = Convert.ToDateTime(xmlDate);
+
+                        sb.AppendFormat("    <ul id=\"{0}\" class=\"archive_daily\">{1}", xmlDate, Environment.NewLine);
+                        sb.Append("     <li class=\"daily_date\">");
+                        sb.AppendFormat("    <span class=\"day_h\"><a href=\"http://me2day.net/{0}/{1}\">{2}일</a></span>{3}", api.UserID, String.Format("{0}/{1}/{2}", xmlToDate.ToString("yyyy"), xmlToDate.ToString("MM"), xmlToDate.ToString("dd")), xmlToDate.ToString("dd"), Environment.NewLine);
+                        sb.AppendLine("         <ul class=\"daily_summ\">");
+                        sb.AppendLine(postsHtml);
+                        sb.AppendLine("          </ul>");
+                        sb.AppendLine("     </li>");
+                        sb.AppendLine("    </ul>");
                     }
+                    #endregion
 
-                    string xmlDate = (xmlFile.IndexOf("_") > 0) ? xmlFile.Split('_')[xmlFile.Split('_').Length - 1].Replace(".xml", "") : string.Empty;
-                    xmlDate = string.Format("{0}-{1}-{2}", xmlDate.Substring(0, 4), xmlDate.Substring(4, 2), xmlDate.Substring(6, 2));
-                    DateTime xmlToDate = Convert.ToDateTime(xmlDate);
-
-                    sb.AppendFormat("    <ul id=\"{0}\" class=\"archive_daily\">{1}", xmlDate, Environment.NewLine);
-                    sb.Append("     <li class=\"daily_date\">");
-                    sb.AppendFormat("    <span class=\"day_h\"><a href=\"http://me2day.net/{0}/{1}\">{2}일</a></span>{3}", api.UserID, String.Format("{0}/{1}/{2}", xmlToDate.ToString("yyyy"), xmlToDate.ToString("MM"), xmlToDate.ToString("dd")), xmlToDate.ToString("dd"), Environment.NewLine);
-                    sb.AppendLine("         <ul class=\"daily_summ\">");
-                    sb.AppendLine(postsHtml);
-                    sb.AppendLine("          </ul>");
-                    sb.AppendLine("     </li>");
-                    sb.AppendLine("    </ul>");
+                    posts = null;
+                    ret = null;
+                    _previousMonth = thisMonth;
                 }
-                #endregion
-                
-                posts = null;
-                ret = null;
-                _previousMonth = thisMonth;
             }
             catch (Exception ex)
             {
@@ -559,13 +572,16 @@ namespace me2dayBackup
         {
             _allYear = getArrayTotalYear();
             isSavePhoto = cbSaveImage.Checked;
+            
+            StatusMsg.Text += "\r\n변환을 시작합니다...\r\n";
             string _template = LoadHtmlTemplate();
             _template = TemplateReplaceBasicInfo(_template);
             _template = TemplateReplaceLeftMenu(_template);
             TemplateReplaceContents(_template);
             StatusMsg.Text += "\r\n\r\n끝!!!!";
             
-            Process.Start("IEXPLORE.EXE", _outputFolder + "\\index.html");
+            if (cbResultView.Checked)
+                Process.Start("IEXPLORE.EXE", _outputFolder + "\\index.html");
         }
         
         #endregion
@@ -657,6 +673,7 @@ namespace me2dayBackup
         private void btnDebug_Click(object sender, EventArgs e)
         {
             tbMe2dayID.Text = "goforit_bong";
+            tbMe2dayID.ReadOnly = false;
             tbMe2dayJoinDate.Text = "2013-06-01";
             tbRecentDate.Text = "2013-06-03";
             timer1.Stop();
@@ -667,6 +684,27 @@ namespace me2dayBackup
         {
             btnMe2dayLogin.Enabled = flag;
             btnMe2dayBackup.Enabled = flag;
+            btnMe2dayExport.Enabled = flag;
         }
+
+        private void btn_Export_Click(object sender, EventArgs e)
+        {
+            StatusMsg.Text = string.Empty;
+            if (String.IsNullOrEmpty(tbMe2dayID.Text))
+            {
+                MessageBox.Show("먼저 미투데이 로그인 해주세요", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (String.IsNullOrEmpty(tbMe2dayJoinDate.Text))
+            {
+                MessageBox.Show("미투 생성일을 입력해주세요", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                InitializeSetting();
+                
+                MakeHTML();
+            }
+        }
+
     }   
 }

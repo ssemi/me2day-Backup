@@ -46,15 +46,17 @@
             this.label4 = new System.Windows.Forms.Label();
             this.RecentCalendar = new System.Windows.Forms.MonthCalendar();
             this.btnDebug = new System.Windows.Forms.Button();
+            this.btnMe2dayExport = new System.Windows.Forms.Button();
+            this.cbResultView = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnMe2dayBackup
             // 
-            this.btnMe2dayBackup.Location = new System.Drawing.Point(155, 6);
+            this.btnMe2dayBackup.Location = new System.Drawing.Point(141, 6);
             this.btnMe2dayBackup.Name = "btnMe2dayBackup";
-            this.btnMe2dayBackup.Size = new System.Drawing.Size(128, 35);
+            this.btnMe2dayBackup.Size = new System.Drawing.Size(74, 35);
             this.btnMe2dayBackup.TabIndex = 6;
-            this.btnMe2dayBackup.Text = "2. 백업 시작하기";
+            this.btnMe2dayBackup.Text = "2. 백업";
             this.btnMe2dayBackup.UseVisualStyleBackColor = true;
             this.btnMe2dayBackup.Click += new System.EventHandler(this.btnMe2dayBackup_Click);
             // 
@@ -78,7 +80,7 @@
             // 
             this.btnMe2dayLogin.Location = new System.Drawing.Point(12, 6);
             this.btnMe2dayLogin.Name = "btnMe2dayLogin";
-            this.btnMe2dayLogin.Size = new System.Drawing.Size(129, 35);
+            this.btnMe2dayLogin.Size = new System.Drawing.Size(123, 35);
             this.btnMe2dayLogin.TabIndex = 1;
             this.btnMe2dayLogin.Text = "1. me2day Login";
             this.btnMe2dayLogin.UseVisualStyleBackColor = true;
@@ -209,15 +211,37 @@
             this.btnDebug.TabIndex = 21;
             this.btnDebug.Text = "Debug";
             this.btnDebug.UseVisualStyleBackColor = true;
+            this.btnDebug.Visible = false;
             this.btnDebug.Click += new System.EventHandler(this.btnDebug_Click);
+            // 
+            // btnMe2dayExport
+            // 
+            this.btnMe2dayExport.Location = new System.Drawing.Point(221, 6);
+            this.btnMe2dayExport.Name = "btnMe2dayExport";
+            this.btnMe2dayExport.Size = new System.Drawing.Size(62, 35);
+            this.btnMe2dayExport.TabIndex = 22;
+            this.btnMe2dayExport.Text = "3. 변환";
+            this.btnMe2dayExport.UseVisualStyleBackColor = true;
+            this.btnMe2dayExport.Click += new System.EventHandler(this.btn_Export_Click);
+            // 
+            // cbResultView
+            // 
+            this.cbResultView.AutoSize = true;
+            this.cbResultView.Location = new System.Drawing.Point(154, 148);
+            this.cbResultView.Name = "cbResultView";
+            this.cbResultView.Size = new System.Drawing.Size(120, 16);
+            this.cbResultView.TabIndex = 23;
+            this.cbResultView.Text = "변환 후 결과 보기";
+            this.cbResultView.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(295, 382);
+            this.Controls.Add(this.cbResultView);
+            this.Controls.Add(this.btnMe2dayExport);
             this.Controls.Add(this.btnDebug);
-            this.Controls.Add(this.RecentCalendar);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.tbRecentDate);
@@ -225,13 +249,14 @@
             this.Controls.Add(this.tbMe2dayID);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.webBrowser1);
-            this.Controls.Add(this.JoinCalendar);
             this.Controls.Add(this.StatusMsg);
             this.Controls.Add(this.tbMe2dayJoinDate);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbSaveImage);
             this.Controls.Add(this.btnMe2dayLogin);
             this.Controls.Add(this.btnMe2dayBackup);
+            this.Controls.Add(this.RecentCalendar);
+            this.Controls.Add(this.JoinCalendar);
             this.Name = "Form1";
             this.Text = "me2Backup";
             this.ResumeLayout(false);
@@ -258,6 +283,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.MonthCalendar RecentCalendar;
         private System.Windows.Forms.Button btnDebug;
+        private System.Windows.Forms.Button btnMe2dayExport;
+        private System.Windows.Forms.CheckBox cbResultView;
     }
 }
 
