@@ -169,12 +169,5 @@ def userDataCommentCrawlingWork(q, post_id, dataFolder, userid, ndate, ntype='js
 		open(saveFileName, "w").write(me2commentjson)	
 
 
-#if __name__=="__main__":
-	#me2bb = me2Backup()
-	#me2bb.dataFileType = "xml"
-	#me2bb.timesleep = 1.0;
-	#me2bb.saveUserDataLastest()
-	#me2bb.saveUserDataCrawler()
-	#me2bb.saveUserData('zoro', '2013-07-18')
-	
+
 	
