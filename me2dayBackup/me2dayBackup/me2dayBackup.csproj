@@ -93,7 +93,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\me2dayAPI\me2api\me2api.csproj">
+    <ProjectReference Include="..\..\..\me2day-API\me2api\me2api.csproj">
       <Project>{aaaa7d17-81a4-4113-b2c0-91b988f89bd3}</Project>
       <Name>me2api</Name>
     </ProjectReference>

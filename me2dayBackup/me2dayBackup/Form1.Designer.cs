@@ -239,6 +239,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(295, 382);
+            this.Controls.Add(this.JoinCalendar);
+            this.Controls.Add(this.RecentCalendar);
+            this.Controls.Add(this.StatusMsg);
             this.Controls.Add(this.cbResultView);
             this.Controls.Add(this.btnMe2dayExport);
             this.Controls.Add(this.btnDebug);
@@ -249,14 +252,11 @@
             this.Controls.Add(this.tbMe2dayID);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.webBrowser1);
-            this.Controls.Add(this.StatusMsg);
             this.Controls.Add(this.tbMe2dayJoinDate);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbSaveImage);
             this.Controls.Add(this.btnMe2dayLogin);
             this.Controls.Add(this.btnMe2dayBackup);
-            this.Controls.Add(this.RecentCalendar);
-            this.Controls.Add(this.JoinCalendar);
             this.Name = "Form1";
             this.Text = "me2Backup";
             this.ResumeLayout(false);

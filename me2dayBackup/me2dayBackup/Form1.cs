@@ -47,7 +47,7 @@ namespace me2dayBackup
 
 
             #if DEBUG
-            //btnDebug.Visible = true;
+            btnDebug.Visible = false;
             #endif
         }
 
@@ -672,7 +672,7 @@ namespace me2dayBackup
 
         private void btnDebug_Click(object sender, EventArgs e)
         {
-            tbMe2dayID.Text = "goforit_bong";
+            tbMe2dayID.Text = "zoro";
             tbMe2dayID.ReadOnly = false;
             tbMe2dayJoinDate.Text = "2013-06-01";
             tbRecentDate.Text = "2013-06-03";
@@ -701,8 +701,10 @@ namespace me2dayBackup
             else
             {
                 InitializeSetting();
-                
+
+                btnsEnabled(false);
                 MakeHTML();
+                btnsEnabled(true);
             }
         }
 
